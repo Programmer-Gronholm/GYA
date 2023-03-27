@@ -25,7 +25,13 @@ public abstract class Person {
         }
         this.hand.takeCardFromDeck(deck);
 
-
-
+    }
+    public boolean hasBlackjack(){
+        if(this.getHand().calculatedValue() == 21){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
