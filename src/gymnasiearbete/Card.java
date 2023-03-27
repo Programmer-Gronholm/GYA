@@ -9,4 +9,13 @@ public class Card {
         this.suit = suit;
         this.rank = rank;
     }
+
+    public int getValue(){
+        return rank.rankValue;
+    }
+
+    public Suit getSuit(){
+        return suit;
+    }
+
 }
