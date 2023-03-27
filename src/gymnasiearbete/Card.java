@@ -18,4 +18,8 @@ public class Card {
         return suit;
     }
 
+    public Card(Card card){
+        this.suit = card.getSuit();
+        this.rank.rankValue = card.getValue();
+    }
 }
