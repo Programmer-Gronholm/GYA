@@ -4,19 +4,19 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-public class Game {
+public class ControlPanel {
 
     public static void main(String[] args) {
-        new Game();
+        new ControlPanel();
     }
 
-    public Game() {
+    public ControlPanel() {
         JFrame frame = new JFrame("Blackjack");
         frame.setLayout(new FlowLayout());
         frame.getContentPane().setBackground(Color.BLACK);
 
-        Blackjack blackjack = new Blackjack();
-        frame.add(blackjack);
+        SimulatePanel simulatePanel = new SimulatePanel();
+        frame.add(simulatePanel);
 
         JPanel panel = new JPanel(new FlowLayout());
         panel.setPreferredSize(new Dimension(200,400));
