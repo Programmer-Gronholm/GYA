@@ -6,9 +6,29 @@ public class BlackJack {
     private Player player;
     private int wins, losses, pushes;
 
+    public BlackJack() {
+        //Create a new deck with 52 cards
+        deck = new Deck(true);
+        //Create a new empty deck
+        discarded = new Deck(true);
+
+        //Create the People
+        dealer = new Dealer();
+        player = new Player();
+
+
+        //Shuffle the deck and start the first round
+        deck.shuffle();
+        for (int i = 0; i < 1000 ; i++) {
+            startRound();
+
+        }
+    }
+
     /**
      * Start a new round, display score, give out cards, check for BlackJack, ask player what they want to do
      */
+
     private void startRound(){
 
         //If this isn't the first round, display the users score and put their cards back in the deck
@@ -27,16 +47,29 @@ public class BlackJack {
         }
 
         //Give the dealer two cards
-        dealer.getHand().takeCardFromDeck(deck);
-        dealer.getHand().takeCardFromDeck(deck);
-
         //Give the player two cards
-        player.getHand().takeCardFromDeck(deck);
-        player.getHand().takeCardFromDeck(deck);
+
+        for (int i = 0; i < 2; i++) {
+            Hand playerHand = player.getHand();
+            Hand dealerHand = dealer.getHand();
+            playerHand.takeCardFromDeck(deck);
+            dealerHand.takeCardFromDeck(deck);
+            CardCounting.updateCount(playerHand.getCardValue(i));
+            CardCounting.updateCount(dealerHand.getCardValue(i));
+
+        }
+
 
         //Show the dealers hand with one card face down
-
-
+        // dealer.printFirstHand();
+        /**
+         * Prints the dealer's first hand, with one card face down.
+        public void printFirstHand(){
+            System.out.println("The dealer's hand looks like this:");
+            System.out.println(super.getHand().getCard(0));
+            System.out.println("The second card is face down.");
+        }
+        */
         //Show the player's hand
 
 
@@ -47,14 +80,14 @@ public class BlackJack {
             //Check if the player also has BlackJack
             if(player.hasBlackjack()){
                 //End the round with a push
-                System.out.println("You both have 21 - Push.");
                 pushes++;
+                CardCounting.resetCount();
                 //start a new round
                 startRound();
             }
             else{
-                System.out.println("Dealer has BlackJack. You lose.");
                 losses++;
+                CardCounting.resetCount();
                 //player lost, start a new round
                 startRound();
             }
@@ -63,8 +96,8 @@ public class BlackJack {
         //Check if player has blackjack to start
         //If we got to this point, we already know the dealer didn't have blackjack
         if(player.hasBlackjack()){
-            System.out.println("You have Blackjack! You win!");
             wins++;
+            CardCounting.resetCount();
             startRound();
         }
 
@@ -74,50 +107,36 @@ public class BlackJack {
 
         //Check if they busted
         if(player.getHand().calculatedValue() > 21){
-            System.out.println("You have gone over 21.");
             losses ++;
+            CardCounting.resetCount();
             startRound();
         }
 
         //Now it's the dealer's turn
-
         while(dealer.getHand().calculatedValue()<17){
             dealer.hit(deck, discarded);
         }
 
         //Check who wins and count wins or losses
         if(dealer.getHand().calculatedValue()>21){
-            System.out.println("Dealer busts");
             wins++;
+            CardCounting.resetCount();
         }
         else if(dealer.getHand().calculatedValue() > player.getHand().calculatedValue()){
-            System.out.println("You lose.");
             losses++;
+            CardCounting.resetCount();
         }
         else if(player.getHand().calculatedValue() > dealer.getHand().calculatedValue()){
-            System.out.println("You win.");
             wins++;
+            CardCounting.resetCount();
         }
         else{
-            System.out.println("Push.");
             pushes++;
+            CardCounting.resetCount();
         }
 
-        //Start a new round
-        startRound();
+        //Starta en ny runda med Recursive Call, metoden startar/kallar sig själv
+
     }
 
-    /**
-     * Pause the game for a short time by putting the thread to sleep
-     * We do this to slow down the game slightly, allowing the user to
-     * read the cards being dealt and see what's going on... instead of getting
-     * a ton of output all at once
-     */
-    public static void pause(){
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -20,6 +20,7 @@ public class Card {
 
     public Card(Card card){
         this.suit = card.getSuit();
-        this.rank.rankValue = card.getValue();
+        //this.rank.rankValue = card.getValue();
+        this.rank = Rank.values()[card.getValue()-2];
     }
 }

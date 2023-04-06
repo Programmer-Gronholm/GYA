@@ -8,7 +8,12 @@ public class Hand {
     public Hand(){
         hand = new ArrayList<Card>();
     }
-
+    public int getCardValue(int index) {
+        if (index < 0 || index >= hand.size()) {
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for hand size " + hand.size());
+        }
+        return hand.get(index).getValue();
+    }
     public void takeCardFromDeck(Deck deck){
         hand.add(deck.takeCard());
     }

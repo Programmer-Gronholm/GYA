@@ -8,6 +8,7 @@ public class ControlPanel {
 
     public static void main(String[] args) {
         new ControlPanel();
+        new BlackJack();
     }
 
     public ControlPanel() {

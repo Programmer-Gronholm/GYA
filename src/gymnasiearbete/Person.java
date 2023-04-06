@@ -5,7 +5,7 @@ public abstract class Person {
     private Hand hand;
 
     /**
-     * Create a new Person
+     * Skapa ny spelare
      */
     public Person(){
         this.hand = new Hand();
@@ -19,7 +19,7 @@ public abstract class Person {
 
     public void hit(Deck deck, Deck discard){
 
-        //If there's no cards left in the deck
+        //Om korten är slut
         if (!deck.hasCards()) {
             deck.reloadDeckFromDiscard(discard);
         }

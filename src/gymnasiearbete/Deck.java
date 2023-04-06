@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class Deck {
     private ArrayList<Card> deck;
-    private int deckAmount = 8;
+    private static int deckAmount = 8;
     public Deck(boolean makeDeck){
         deck = new ArrayList<Card>();
         if(makeDeck){
@@ -24,6 +24,10 @@ public class Deck {
             }
         }
     }
+    public int getDeckAmount(){
+        return deckAmount;
+    }
+
     public void shuffle(){
         Collections.shuffle(deck, new Random());
     }
@@ -67,11 +71,11 @@ public class Deck {
      * Clear the old deck
      * @param discard - the deck we're getting the cards from
      */
+    // Ran out of cards, creating new deck from discard pile & shuffling deck.
     public void reloadDeckFromDiscard(Deck discard){
         this.addCards(discard.getCards());
         this.shuffle();
         discard.emptyDeck();
-        System.out.println("Ran out of cards, creating new deck from discard pile & shuffling deck.");
     }
     public int cardsLeft(){
         return deck.size();
