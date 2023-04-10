@@ -54,4 +54,13 @@ public class Hand {
 
     }
 
+    public Card removeCard(int i){
+        Card cardToTake = new Card(hand.get(i));
+        hand.remove(i);
+        return cardToTake;
+    }
+
+    public void addCard(Card card){
+        hand.add(card);
+    }
 }

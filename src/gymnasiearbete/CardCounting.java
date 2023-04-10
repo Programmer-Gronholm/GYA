@@ -1,6 +1,7 @@
 package gymnasiearbete;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CardCounting {
     // Define the count variable
@@ -28,6 +29,10 @@ public class CardCounting {
         count = 0;
     }
 
-
+    public static int RandomDecision(){
+        Random rand = new Random();
+        return rand.nextInt(2) + 1;
+    }
+    
 
 }

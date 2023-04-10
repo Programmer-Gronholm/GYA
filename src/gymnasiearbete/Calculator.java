@@ -12,6 +12,7 @@ public class Calculator {
         double prcNoLoss= 0;
         prcNoLoss = (double) (wins+pushes)/(losses+pushes+wins);
         prcNoLoss *= 100;
+
         return prcNoLoss;
     }
 

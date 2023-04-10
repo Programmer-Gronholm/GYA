@@ -1,8 +1,6 @@
 package gymnasiearbete;
 
 import java.util.Random;
-import java.util.Scanner;
-
 public class Player extends Person{
     private int decision = 0;
     private Random random = new Random();
@@ -36,9 +34,22 @@ public class Player extends Person{
             }
 
             // Else stand
-        } else{
+        } else if (decision == 2){
                 return;
             }
+        else if(decision == 3){
+
+            this.split(deck, discard);
+            if(this.getHand().calculatedValue()>20){
+                // går ut ur metoden
+                return;
+            }
+            //if they didn't bust or get 21, allow them to decide to hit or stand again by going back to this same method
+            else{
+                this.makeDecision(deck, discard);
+            }
+
+        }
     }
 
 }
