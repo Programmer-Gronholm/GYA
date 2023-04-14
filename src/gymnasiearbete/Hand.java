@@ -8,13 +8,19 @@ public class Hand {
     public Hand(){
         hand = new ArrayList<Card>();
     }
+    public ArrayList<Card> getHandCards(){
+        return hand;
+    }
     public int getCardValue(int index) {
         if (index < 0 || index >= hand.size()) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for hand size " + hand.size());
         }
         return hand.get(index).getValue();
     }
-    public void takeCardFromDeck(Deck deck){
+    public void takeCardFromDeck(Deck deck, Deck discard){
+        if (!deck.hasCards()) {
+            deck.reloadDeckFromDiscard(discard);
+        }
         hand.add(deck.takeCard());
     }
 
@@ -63,4 +69,17 @@ public class Hand {
     public void addCard(Card card){
         hand.add(card);
     }
+
+    public Card getIndexCard(int idx){
+        return hand.get(idx);
+    }
+    public Hand copyHand() {
+        Hand copy = new Hand();
+        for (Card card : hand) {
+            Card cardCopy = new Card(card);
+            copy.addCard(cardCopy);
+        }
+        return copy;
+    }
+
 }

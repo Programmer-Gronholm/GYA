@@ -5,7 +5,7 @@ public class Player extends Person{
     private int decision = 0;
     private Random random = new Random();
 
-    public void makeDecision(Deck deck, Deck discard) {
+    public void makeDecision(Deck deck, Deck discard, Hand hand) {
         // få valet av strategierna och sätt den som "decision":
 
         if (CardCounting.getTrueCount(deck.getCards(), deck.getDeckAmount()) >= 1) {
@@ -18,19 +18,25 @@ public class Player extends Person{
             decision = (random.nextDouble() < 0.3) ? 1 : 2;
             // 30% chance to hit, 70% chance to stand
         }
-
+        /*
+        if(canSplit(hand)){
+            decision = 3;
+        }
+        */
         // Vad som händer beroende på val av hit, stand eller split
         if (decision == 1) {
             //hit the deck using the deck and discard deck
-            this.hit(deck, discard);
+            hit(deck, discard, hand);
             //return (exit the method) if they have blackjack or busted
-            if(this.getHand().calculatedValue()>20){
+            if(hand.calculatedValue()>20){
                 // går ut ur metoden
                 return;
+
             }
             //if they didn't bust or get 21, allow them to decide to hit or stand again by going back to this same method
             else{
-                this.makeDecision(deck, discard);
+
+                makeDecision(deck, discard, hand);
             }
 
             // Else stand
@@ -39,17 +45,13 @@ public class Player extends Person{
             }
         else if(decision == 3){
 
-            this.split(deck, discard);
-            if(this.getHand().calculatedValue()>20){
-                // går ut ur metoden
-                return;
-            }
-            //if they didn't bust or get 21, allow them to decide to hit or stand again by going back to this same method
-            else{
-                this.makeDecision(deck, discard);
-            }
+            split(deck, discard, hand);
+
 
         }
+    }
+    public int getDecision(){
+        return decision;
     }
 
 }

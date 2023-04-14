@@ -1,57 +1,77 @@
 package gymnasiearbete;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
+
 public abstract class Person {
 
-    private Hand hand;
-    private SplitHandList splitHandList;
+
+    private HandList handList;
 
     /**
      * Skapa ny spelare
      */
     public Person(){
-        this.hand = new Hand();
-        this.splitHandList = new SplitHandList();
-    }
-    public Hand getHand(){
-        return this.hand;
-    }
-    public void setHand(Hand hand){
-        this.hand = hand;
+        this.handList = new HandList();
     }
 
-    public void hit(Deck deck, Deck discard){
+
+    public HandList getHandList() {
+        return handList;
+    }
+
+    public void hit(Deck deck, Deck discard, Hand hand){
 
         //Om korten är slut
         if (!deck.hasCards()) {
             deck.reloadDeckFromDiscard(discard);
         }
-        this.hand.takeCardFromDeck(deck);
+        int hitCard = deck.getCards().get(0).getValue();
+        hand.takeCardFromDeck(deck, discard);
+        CardCounting.updateCount(hitCard);
 
     }
 
-    public void split(Deck deck, Deck discard){
-
-        // Om korten är slut, tar korten från discardeck
+    public void split(Deck deck, Deck discard, Hand hand){
         if (!deck.hasCards()) {
             deck.reloadDeckFromDiscard(discard);
         }
 
+
         // Skapa ny hand (vid split delas den första handen upp på två händer)
-        Hand splithand = new Hand();
+        Hand splithand1 = new Hand();
+        Hand splithand2 = new Hand();
+        System.out.println("Skapade nya händer!");
         // Lägger till den nya handen till en lista så att denna kan senare raderas från spelet
-        splitHandList.addHand(splithand);
 
         // Lägger till det andra kortet från den första handen till den nya handen
-        splithand.addCard(this.hand.removeCard(1));
+        splithand1.addCard(hand.getIndexCard(0));
+        splithand2.addCard(hand.getIndexCard(1));
+        System.out.println("Första kortet!");
+
 
         // Lägger till ett nytt kort till båda händerna
-        this.hand.takeCardFromDeck(deck);
-        splithand.takeCardFromDeck(deck);
+        hit(deck, discard, splithand1);
+        hit(deck, discard, splithand2);
+        System.out.println("Andra kortet!");
+
+        handList.addHand(splithand1);
+        handList.addHand(splithand2);
+        System.out.println("Händer i lisatan!");
+
 
 
     }
-    public boolean hasBlackjack(){
-        if(this.getHand().calculatedValue() == 21){
+    public boolean canSplit(Hand hand){
+        if(hand.getCardValue(0) == hand.getCardValue(1) && hand.getHandCards().size() == 2){
+            return true;
+        } else{
+            return false;
+        }
+    }
+    public boolean hasBlackjack(Hand hand){
+        if(hand.calculatedValue() == 21){
             return true;
         }
         else{
