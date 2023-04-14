@@ -1,8 +1,7 @@
 package gymnasiearbete;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
+
 
 public class BlackJack {
     private Deck deck, discarded;
@@ -91,7 +90,7 @@ public class BlackJack {
                     break;
                 }
             }
-            System.out.println(discarded.cardsLeft());
+
 
 
             //Check if player has blackjack to start
@@ -102,11 +101,12 @@ public class BlackJack {
                 player.getHandList().removeHand(0, discarded);
                 break;
             }
-            System.out.println(discarded.cardsLeft());
 
+            System.out.println(player.getHandList().getHandsList().size());
             // Hanterar om split så inget error händer
             ArrayList<Hand> splithands = new ArrayList<Hand>();
 
+            // Lägg en while loop runt detta:
             for(Hand hand : player.getHandList().getHandsList()){
                 if(player.canSplit(hand)){
                     splithands.add(hand.copyHand());
@@ -118,11 +118,11 @@ public class BlackJack {
                     player.split(deck,discarded, hand);
 
                 }
+                player.getHandList().getHandsList().remove(0);
             }
-            player.getHandList().getHandsList().removeAll(splithands);
             splithands.clear();
 
-
+            System.out.println(player.getHandList().getHandsList().size());
             //Let the player decide what to do next
             boolean allMatch = false;
             for (Hand hand : player.getHandList().getHandsList()) {
@@ -147,26 +147,26 @@ public class BlackJack {
                     }
                 }
             }
-            System.out.println(discarded.cardsLeft());
+
             player.getHandList().getHandsList().removeAll(bustedHands);
             if(allMatch){
                 // If all objects are equal to the first object, clear the list and start new round
                 break;
             }
-            System.out.println(discarded.cardsLeft());
+
 
 
             //Remove hands that have busted
 
 
-            System.out.println(discarded.cardsLeft());
+
 
             //Dealer's turn
             while (dealerHand.calculatedValue() < 17) {
                 dealer.hit(deck, discarded, dealerHand);
             }
 
-            System.out.println(discarded.cardsLeft());
+
             for (Hand hand : player.getHandList().getHandsList()){
                 //Check who wins and count wins, losses and pushes
                 if (dealerHand.calculatedValue() > 21) {
@@ -185,8 +185,8 @@ public class BlackJack {
                 discarded.addCards(hand.getHandCards());
             }
 
-            System.out.println(discarded.cardsLeft());
-            System.out.println(deck.cardsLeft());
+
+
             player.getHandList().getHandsList().clear();
 
 
