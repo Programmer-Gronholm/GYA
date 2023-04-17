@@ -1,13 +1,10 @@
 package gymnasiearbete;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-
 public abstract class Person {
 
 
     private HandList handList;
+    private boolean willSplit;
 
     /**
      * Skapa ny spelare
@@ -29,7 +26,7 @@ public abstract class Person {
         }
         int hitCard = deck.getCards().get(0).getValue();
         hand.takeCardFromDeck(deck, discard);
-        CardCounting.updateCount(hitCard);
+        Strategies.updateCount(hitCard);
 
     }
 
@@ -63,13 +60,12 @@ public abstract class Person {
 
 
     }
-    public boolean canSplit(Hand hand){
-        if(hand.getCardValue(0) == hand.getCardValue(1) && hand.getHandCards().size() == 2){
-            return true;
-        } else{
-            return false;
-        }
+
+    public boolean getWillSplit(){
+        return willSplit;
     }
+
+
     public boolean hasBlackjack(Hand hand){
         if(hand.calculatedValue() == 21){
             return true;

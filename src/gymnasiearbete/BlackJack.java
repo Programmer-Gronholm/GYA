@@ -7,9 +7,10 @@ public class BlackJack {
     private Deck deck, discarded;
     private Dealer dealer;
     private Player player;
-    private Hand playerHand;
+
     private Hand dealerHand;
-    ArrayList<Hand> bustedHands;
+    private ArrayList<Hand> bustedHands;
+    private boolean willSplit = false;
     private int wins, losses, pushes;
 
     public BlackJack() {
@@ -28,19 +29,21 @@ public class BlackJack {
 
         //Shuffle the deck and start the first round
         deck.shuffle();
-        for (int i = 0; i <= 1000; i++) {
+        for (int i = 0; i <= 10000; i++) {
             startRound();
         }
+        System.out.println("Wins: " + wins + " Losses: " + losses + " Pushes: " + pushes);
     }
 
     private void startRound(){
         // Lägger till spelaren hand
         player.getHandList().addHand(new Hand());
 
+        willSplit = false;
 
         bustedHands = new ArrayList<>();
 
-        CardCounting.resetCount();
+        Strategies.resetCount();
         boolean roundOver = false;
 
         while(!roundOver) {
@@ -58,7 +61,6 @@ public class BlackJack {
                 //reload the deck from discard pile if we're out of cards
                 System.out.println("RELOAD");
                 deck.reloadDeckFromDiscard(discarded);
-                System.out.println(deck.cardsLeft());
             }
 
             //Give the dealer two cards
@@ -67,9 +69,9 @@ public class BlackJack {
             for (int i = 0; i < 2; i++) {
                 player.getHandList().getHandsList().get(0).takeCardFromDeck(deck, discarded);
                 dealerHand.takeCardFromDeck(deck, discarded);
-                CardCounting.updateCount(player.getHandList().getHandsList().get(0).getCardValue(i));
+                Strategies.updateCount(player.getHandList().getHandsList().get(0).getCardValue(i));
             }
-            CardCounting.updateCount(dealerHand.getCardValue(1));
+            Strategies.updateCount(dealerHand.getCardValue(1));
 
 
             //Check if dealer has BlackJack to start
@@ -107,27 +109,36 @@ public class BlackJack {
             ArrayList<Hand> splithands = new ArrayList<Hand>();
 
             // Lägg en while loop runt detta:
-            for(Hand hand : player.getHandList().getHandsList()){
-                if(player.canSplit(hand)){
-                    splithands.add(hand.copyHand());
+            boolean checkSplit = true;
+            while(checkSplit) {
+                for (Hand hand : player.getHandList().getHandsList()) {
+                    Strategies.splitStrategy(hand, dealerHand, willSplit, deck, discarded, player);
+                    if (hand.canSplit() && willSplit) {
+                        splithands.add(hand.copyHand());
 
+                    }
+                }
+                if (splithands.size() >= 1) {
+                    for (Hand hand : splithands) {
+                        player.split(deck, discarded, hand);
+                        player.getHandList().getHandsList().remove(hand);
+                    }
+                }
+                splithands.clear();
+                for (Hand hand : player.getHandList().getHandsList()){
+                    if (!hand.canSplit())
+                        checkSplit = false;
                 }
             }
-            if(splithands.size() >= 1){
-                for (Hand hand : splithands){
-                    player.split(deck,discarded, hand);
 
-                }
-                player.getHandList().getHandsList().remove(0);
-            }
-            splithands.clear();
+
 
             System.out.println(player.getHandList().getHandsList().size());
             //Let the player decide what to do next
             boolean allMatch = false;
             for (Hand hand : player.getHandList().getHandsList()) {
 
-                player.makeDecision(deck, discarded, hand);
+                player.makeDecision(deck, discarded, hand, dealerHand);
 
                 //Check if they busted
                 if (hand.calculatedValue() > 21) {
@@ -192,6 +203,9 @@ public class BlackJack {
 
             roundOver = true;
         }
-    }
 
+    }
+    public Hand getDealerHand(){
+        return dealerHand;
+    }
 }
