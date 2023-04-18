@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Hand {
     private ArrayList<Card> hand;
     private int aceCount;
-    private boolean isSoftHand;
+    private boolean isSoftHand = false;
 
     public Hand(){
         hand = new ArrayList<Card>();
@@ -39,6 +39,7 @@ public class Hand {
             //Count how many aces have been added
             if (card.getValue() == 11){
                 aceCount ++;
+                isSoftHand = true;
             }
         }
 
@@ -48,6 +49,7 @@ public class Hand {
             while(aceCount > 0 && value > 21){
                 aceCount --;
                 value -= 10;
+                isSoftHand = false;
             }
         }
 
@@ -68,6 +70,10 @@ public class Hand {
     public boolean isSoftHand(){
         return hasAce() && calculatedValue() + 10 <= 21;
 
+    }
+
+    public boolean getIsSoftHand(){
+        return isSoftHand;
     }
 
     public void discardHandToDeck(Deck discardDeck){

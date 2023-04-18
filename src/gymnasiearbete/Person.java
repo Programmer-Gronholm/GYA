@@ -1,6 +1,6 @@
 package gymnasiearbete;
 
-public abstract class Person {
+public class Person {
 
 
     private HandList handList;

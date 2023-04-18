@@ -6,6 +6,8 @@ import java.util.Random;
 public class Strategies {
     // Define the count variable
     private static int count = 0;
+    private static boolean willSplit = false;
+    private static int decision = 0;
 
 
     // Method to update the count based on the drawn card
@@ -36,10 +38,11 @@ public class Strategies {
         return randDecision;
     }
 
-    public static void basicStrategy(Hand playerHand, Hand dealerHand, int decision){
-        if(playerHand.isSoftHand()){
+    public static void basicStrategy(Hand playerHand, Hand dealerHand){
+        if(playerHand.getIsSoftHand()){
+            System.out.println("Soft Hand!");
             switch (playerHand.calculatedValue()){
-                case 13, 14, 15, 16, 17:
+                case 13: case 14: case 15: case 16: case 17:
                     decision = 1;
                     break;
                 case 18:
@@ -58,16 +61,20 @@ public class Strategies {
             }
         } else{
             switch (playerHand.calculatedValue()){
-                case 5, 6, 7, 8, 9 , 10, 11:
+                case 5: case 6: case 7: case 8: case 9: case 10: case 11:
                     decision = 1;
                     break;
                 case 12:
-                    if(dealerHand.getCardValue(1) <= 6 && dealerHand.getCardValue(1) >= 4 ){
+                    if(dealerHand.getCardValue(1) <= 6 && dealerHand.getCardValue(1) >= 4){
                         decision = 1;
                     }
                     break;
-
-                case 17, 18, 19, 20:
+                case 13: case 14: case 15: case 16:
+                    if(dealerHand.getCardValue(1) >= 7 && dealerHand.getCardValue(1) <= 11){
+                        decision = 1;
+                    }
+                    break;
+                case 17: case 18: case 19: case 20:
                     break;
 
             }
@@ -76,14 +83,14 @@ public class Strategies {
 
 
     }
-    public static void splitStrategy(Hand playerHand, Hand dealerHand, boolean willSplit, Deck deck, Deck discard, Player player){
+    public static void splitStrategy(Hand playerHand, Hand dealerHand, Deck deck, Deck discard, Player player){
+        willSplit = false;
         if(playerHand.canSplit()){
             switch (playerHand.getCardValue(0)){
-                case 2, 3:
+                case 2: case 3: case 7:
                     if(dealerHand.getCardValue(1) >= 2 && dealerHand.getCardValue(1) <= 7){
                         willSplit = true;
                     } else{
-                        willSplit = false;
                         player.hit(deck,discard,playerHand);
                     }
                     break;
@@ -91,27 +98,16 @@ public class Strategies {
                     if(dealerHand.getCardValue(1) == 5 || dealerHand.getCardValue(1) == 6){
                         willSplit = true;
                     } else {
-                        willSplit = false;
                         player.hit(deck,discard,playerHand);
                     }
                     break;
                 case 5:
-                    willSplit = false;
                     player.hit(deck,discard,playerHand);
                     break;
                 case 6:
                     if (dealerHand.getCardValue(1) >= 2 && dealerHand.getCardValue(1) <= 6){
                         willSplit = true;
                     } else {
-                        willSplit = false;
-                        player.hit(deck,discard,playerHand);
-                    }
-                    break;
-                case 7:
-                    if (dealerHand.getCardValue(1) >= 2 && dealerHand.getCardValue(1) <= 7){
-                        willSplit = true;
-                    } else{
-                        willSplit = false;
                         player.hit(deck,discard,playerHand);
                     }
                     break;
@@ -119,7 +115,6 @@ public class Strategies {
                     if (dealerHand.getCardValue(1) >= 2 && dealerHand.getCardValue(1) <= 9){
                         willSplit = true;
                     } else{
-                        willSplit = false;
                         player.hit(deck,discard,playerHand);
                     }
                     break;
@@ -131,12 +126,10 @@ public class Strategies {
                         willSplit = true;
                     break;
                 case 10:
-                    willSplit = false;
                     // stand
                     break;
                 case 11:
                     if (dealerHand.getCardValue(1) == 11){
-                        willSplit = false;
                         player.hit(deck,discard,playerHand);
                     } else
                         willSplit = true;
@@ -146,6 +139,13 @@ public class Strategies {
 
         }
 
+    }
+    public static int getDecision(){
+        return decision;
+    }
+
+    public static boolean getWillSplit(){
+        return willSplit;
     }
 
 

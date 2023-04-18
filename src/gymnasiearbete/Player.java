@@ -9,7 +9,7 @@ public class Player extends Person{
     public void makeDecision(Deck deck, Deck discard, Hand playerHand, Hand dealerHand) {
         // få valet av strategierna och sätt den som "decision":
 
-        /*
+
         if (Strategies.getTrueCount(deck.getCards(), deck.getDeckAmount()) >= 1) {
             // If the true count is 1 or higher, we should hit more often
             // Assume "random" is a Random object used to simulate randomness
@@ -21,13 +21,14 @@ public class Player extends Person{
             // 30% chance to hit, 70% chance to stand
         }
 
-         */
+
 
         // decision = Strategies.randomDecision();
 
-
-        Strategies.basicStrategy(playerHand, dealerHand, decision);
-
+        /*
+        Strategies.basicStrategy(playerHand, dealerHand);
+        decision = Strategies.getDecision();
+        */
 
         // Vad som händer beroende på val av hit, stand eller split
         if (decision == 1) {

@@ -5,8 +5,9 @@ import java.util.ArrayList;
 
 public class BlackJack {
     private Deck deck, discarded;
-    private Dealer dealer;
+    private Person dealer;
     private Player player;
+
 
     private Hand dealerHand;
     private ArrayList<Hand> bustedHands;
@@ -19,17 +20,16 @@ public class BlackJack {
         //Create a new empty deck
         discarded = new Deck(false);
 
-
         //Create the People
-        dealer = new Dealer();
+        dealer = new Person();
         player = new Player();
         dealerHand = new Hand();
         dealer.getHandList().addHand(dealerHand);
 
-
         //Shuffle the deck and start the first round
         deck.shuffle();
         for (int i = 0; i <= 10000; i++) {
+            System.out.println("Runda: " + i);
             startRound();
         }
         System.out.println("Wins: " + wins + " Losses: " + losses + " Pushes: " + pushes);
@@ -73,7 +73,6 @@ public class BlackJack {
             }
             Strategies.updateCount(dealerHand.getCardValue(1));
 
-
             //Check if dealer has BlackJack to start
             if (dealer.hasBlackjack(dealerHand)) {
                 //Check if the player also has BlackJack
@@ -82,62 +81,90 @@ public class BlackJack {
                     System.out.println("Push");
                     pushes++;
                     //start a new round
-                    player.getHandList().removeHand(0, discarded);
-                    break;
+                    // remove the hand (there is only one hand in the list)
                 } else {
                     losses++;
                     System.out.println("loss");
                     //player lost, start a new round
-                    player.getHandList().removeHand(0, discarded);
-                    break;
+                    // remove the hand (there is only one hand in the list)
                 }
+                player.getHandList().removeHand(0, discarded);
+                break;
             }
-
-
 
             //Check if player has blackjack to start
             //If we got to this point, we already know the dealer didn't have blackjack
             if (player.hasBlackjack(player.getHandList().getHandsList().get(0))) {
                 System.out.println("wins");
                 wins++;
+                // remove the hand (there is only one hand in the list)
                 player.getHandList().removeHand(0, discarded);
                 break;
             }
 
-            System.out.println(player.getHandList().getHandsList().size());
-            // Hanterar om split så inget error händer
             ArrayList<Hand> splithands = new ArrayList<Hand>();
+            ArrayList<Integer> indexArr = new ArrayList<>();
 
-            // Lägg en while loop runt detta:
             boolean checkSplit = true;
-            while(checkSplit) {
-                for (Hand hand : player.getHandList().getHandsList()) {
-                    Strategies.splitStrategy(hand, dealerHand, willSplit, deck, discarded, player);
-                    if (hand.canSplit() && willSplit) {
-                        splithands.add(hand.copyHand());
 
+            // Checks if the hand can split
+
+            while (checkSplit) {
+                for (Hand hand : player.getHandList().getHandsList()) {
+                    Strategies.splitStrategy(hand, dealerHand, deck, discarded, player);
+                    if (hand.canSplit() && Strategies.getWillSplit()) {
+                        splithands.add(hand.copyHand());
+                        indexArr.add(player.getHandList().getHandsList().indexOf(hand));
                     }
                 }
                 if (splithands.size() >= 1) {
                     for (Hand hand : splithands) {
                         player.split(deck, discarded, hand);
-                        player.getHandList().getHandsList().remove(hand);
+                    }
+                    for (Integer idx : indexArr) {
+                        if (idx != null) {
+                            int idxInt = idx;
+                            player.getHandList().getHandsList().remove(idxInt);
+                        }
                     }
                 }
+                indexArr.clear();
                 splithands.clear();
-                for (Hand hand : player.getHandList().getHandsList()){
-                    if (!hand.canSplit())
+                for (Hand hand : player.getHandList().getHandsList()) {
+                    if (!hand.canSplit())      // skapar fel
                         checkSplit = false;
                 }
             }
 
-
-
-            System.out.println(player.getHandList().getHandsList().size());
-            //Let the player decide what to do next
-            boolean allMatch = false;
             for (Hand hand : player.getHandList().getHandsList()) {
+                //Check if they busted
+                if (hand.calculatedValue() > 21) {
+                    System.out.println("loss");
+                    losses++;
+                    discarded.addCards(hand.getHandCards());
+                    indexArr.add(player.getHandList().getHandsList().indexOf(hand));
+                    //bustedHands.add(hand);
+                }
+            }
+            if (indexArr.size() >= 1){
+                for (Integer idx : indexArr) {
+                    int idxInt = idx;
+                    player.getHandList().getHandsList().remove(idxInt);
+                }
+                indexArr.clear();
+            }
+            if(player.getHandList().getHandsList().size() == 0){
+                // If all objects are equal to the first object, clear the list and start new round
+                break;
+            }
 
+
+
+            //Let the player decide what to do next
+            for (Hand hand : player.getHandList().getHandsList()) {
+                if(hand.calculatedValue() == 21){
+                    continue;
+                }
                 player.makeDecision(deck, discarded, hand, dealerHand);
 
                 //Check if they busted
@@ -145,38 +172,27 @@ public class BlackJack {
                     System.out.println("loss");
                     losses++;
                     discarded.addCards(hand.getHandCards());
-                    bustedHands.add(hand);
-                    // Check if all other objects in the list are equal to the first object
-                    if(player.getHandList().getHandsList().size() >= 2)
-                        for (int i = 1; i < player.getHandList().getHandsList().size(); i++) {
-                            if (!player.getHandList().getHandsList().get(i).equals(player.getHandList().getHandsList().get(0))) {
-                                // If any object is not equal to the first object, return without clearing the list
-                                break;
-                            } else {
-                                allMatch = true;
-                            }
-                    }
+                    indexArr.add(player.getHandList().getHandsList().indexOf(hand));
+                    //bustedHands.add(hand);
                 }
             }
-
-            player.getHandList().getHandsList().removeAll(bustedHands);
-            if(allMatch){
+            // Remove busted hands
+            if (indexArr.size() >= 1){
+                for (Integer idx : indexArr) {
+                    int idxInt = idx;
+                    player.getHandList().getHandsList().remove(idxInt);
+                }
+                indexArr.clear();
+            }
+            if(player.getHandList().getHandsList().size() == 0){
                 // If all objects are equal to the first object, clear the list and start new round
                 break;
             }
-
-
-
-            //Remove hands that have busted
-
-
-
 
             //Dealer's turn
             while (dealerHand.calculatedValue() < 17) {
                 dealer.hit(deck, discarded, dealerHand);
             }
-
 
             for (Hand hand : player.getHandList().getHandsList()){
                 //Check who wins and count wins, losses and pushes
@@ -195,17 +211,8 @@ public class BlackJack {
                 }
                 discarded.addCards(hand.getHandCards());
             }
-
-
-
             player.getHandList().getHandsList().clear();
-
-
             roundOver = true;
         }
-
-    }
-    public Hand getDealerHand(){
-        return dealerHand;
     }
 }
