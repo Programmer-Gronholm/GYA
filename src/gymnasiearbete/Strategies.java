@@ -39,6 +39,7 @@ public class Strategies {
     }
 
     public static void basicStrategy(Hand playerHand, Hand dealerHand){
+        decision = 0;
         if(playerHand.getIsSoftHand()){
             System.out.println("Soft Hand!");
             switch (playerHand.calculatedValue()){

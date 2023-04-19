@@ -7,8 +7,6 @@ public class BlackJack {
     private Deck deck, discarded;
     private Person dealer;
     private Player player;
-
-
     private Hand dealerHand;
     private ArrayList<Hand> bustedHands;
     private boolean willSplit = false;
@@ -103,7 +101,7 @@ public class BlackJack {
             }
 
             ArrayList<Hand> splithands = new ArrayList<Hand>();
-            ArrayList<Integer> indexArr = new ArrayList<>();
+            ArrayList<Integer> indexArr = new ArrayList<Integer>();
 
             boolean checkSplit = true;
 
@@ -120,19 +118,23 @@ public class BlackJack {
                 if (splithands.size() >= 1) {
                     for (Hand hand : splithands) {
                         player.split(deck, discarded, hand);
+                        System.out.println(player.getHandList().getHandsList().size());
                     }
-                    for (Integer idx : indexArr) {
-                        if (idx != null) {
-                            int idxInt = idx;
-                            player.getHandList().getHandsList().remove(idxInt);
-                        }
+                    for (int i = indexArr.size() - 1; i >= 0; i--) {
+                        int idxInt = indexArr.get(i);
+                        player.getHandList().getHandsList().remove(idxInt);
                     }
                 }
                 indexArr.clear();
                 splithands.clear();
+                int unsplitableHands = 0;
+
                 for (Hand hand : player.getHandList().getHandsList()) {
-                    if (!hand.canSplit())      // skapar fel
-                        checkSplit = false;
+                    if (!hand.canSplit())
+                        unsplitableHands++;
+                }
+                if (unsplitableHands == player.getHandList().getHandsList().size()) {
+                    checkSplit = false;
                 }
             }
 
@@ -143,12 +145,11 @@ public class BlackJack {
                     losses++;
                     discarded.addCards(hand.getHandCards());
                     indexArr.add(player.getHandList().getHandsList().indexOf(hand));
-                    //bustedHands.add(hand);
                 }
             }
             if (indexArr.size() >= 1){
-                for (Integer idx : indexArr) {
-                    int idxInt = idx;
+                for (int i = indexArr.size() - 1; i >= 0 ; i--) {
+                    int idxInt = indexArr.get(i);
                     player.getHandList().getHandsList().remove(idxInt);
                 }
                 indexArr.clear();
@@ -158,13 +159,12 @@ public class BlackJack {
                 break;
             }
 
-
-
             //Let the player decide what to do next
             for (Hand hand : player.getHandList().getHandsList()) {
                 if(hand.calculatedValue() == 21){
                     continue;
                 }
+                System.out.println(player.getHandList().getHandsList().size());
                 player.makeDecision(deck, discarded, hand, dealerHand);
 
                 //Check if they busted
@@ -173,13 +173,12 @@ public class BlackJack {
                     losses++;
                     discarded.addCards(hand.getHandCards());
                     indexArr.add(player.getHandList().getHandsList().indexOf(hand));
-                    //bustedHands.add(hand);
                 }
             }
             // Remove busted hands
             if (indexArr.size() >= 1){
-                for (Integer idx : indexArr) {
-                    int idxInt = idx;
+                for (int i = indexArr.size() - 1; i >= 0 ; i--) {
+                    int idxInt = indexArr.get(i);
                     player.getHandList().getHandsList().remove(idxInt);
                 }
                 indexArr.clear();
@@ -211,6 +210,8 @@ public class BlackJack {
                 }
                 discarded.addCards(hand.getHandCards());
             }
+
+            System.out.println(player.getHandList().getHandsList().size());
             player.getHandList().getHandsList().clear();
             roundOver = true;
         }

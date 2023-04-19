@@ -42,11 +42,7 @@ public class Deck {
 
     }
     public boolean hasCards() {
-        if (deck.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return deck.size() > 0;
     }
     /**
      * Empties out this Deck
